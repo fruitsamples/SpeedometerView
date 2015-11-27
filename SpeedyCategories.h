@@ -1,7 +1,7 @@
 /*
      File: SpeedyCategories.h
  Abstract: Simple utility categories used in this example.
-  Version: 1.2
+  Version: 1.3
  
  Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple
  Inc. ("Apple") in consideration of your agreement to the following
@@ -41,34 +41,32 @@
  STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
  
- Copyright (C) 2011 Apple Inc. All Rights Reserved.
+ Copyright (C) 2012 Apple Inc. All Rights Reserved.
  
  */
 
 #import <Cocoa/Cocoa.h>
 
 
-
 @interface NSAffineTransform (RectMapping)
 
 	/* initialize the NSAffineTransform so it maps points in 
 	srcBounds proportionally to points in dstBounds */
-- (NSAffineTransform*)mapFrom:(NSRect) srcBounds to: (NSRect) dstBounds;
-
+- (NSAffineTransform *)mapFrom:(NSRect)srcBounds to:(NSRect)dstBounds;
 
 	/* scale the rectangle 'bounds' proportionally to the given height centered
 	above the origin with the bottom of the rectangle a distance of height above
 	the a particular point.  Handy for revolving items around a particular point. */
-- (NSAffineTransform*)scaleBounds:(NSRect) bounds 
-		toHeight: (float) height centeredDistance:(float) distance abovePoint:(NSPoint) location;
+- (NSAffineTransform *)scaleBounds:(NSRect)bounds 
+		toHeight:(float)height centeredDistance:(float)distance abovePoint:(NSPoint)location;
 
 	/* same as the above, except it centers the item above the origin.  */
-- (NSAffineTransform*)scaleBounds:(NSRect) bounds
-		toHeight: (float) height centeredAboveOrigin:(float) distance;
+- (NSAffineTransform *)scaleBounds:(NSRect)bounds
+		toHeight:(float)height centeredAboveOrigin:(float)distance;
 
 	/* initialize the NSAffineTransform so it will flip the contents of bounds
 	vertically. */
-- (NSAffineTransform*)flipVertical:(NSRect) bounds;
+- (NSAffineTransform *)flipVertical:(NSRect)bounds;
 
 @end
 
@@ -78,19 +76,18 @@
 
 	/* fill a bezier path, but draw a shadow under it offset by the
 	given angle (counter clockwise from the x-axis) and distance. */
-- (void)fillWithShadowAtDegrees:(float) angle withDistance: (float) distance;
+- (void)fillWithShadowAtDegrees:(float)angle withDistance:(float)distance;
 
 @end
 
 
 
-
 @interface BezierNSLayoutManager: NSLayoutManager {
-	NSBezierPath* theBezierPath;
+	NSBezierPath *theBezierPath;
 }
-- (void) dealloc;
+- (void)dealloc;
 
-@property (nonatomic, copy) NSBezierPath* theBezierPath;
+@property (nonatomic, copy) NSBezierPath *theBezierPath;
 
 	/* convert the NSString into a NSBezierPath using a specific font. */
 - (void)showPackedGlyphs:(char *)glyphs length:(unsigned)glyphLen
@@ -102,7 +99,7 @@
 @interface NSString (BezierConversions)
 
 	/* convert the NSString into a NSBezierPath using a specific font. */
-- (NSBezierPath*) bezierWithFont: (NSFont*) theFont;
+- (NSBezierPath *)bezierWithFont:(NSFont *)theFont;
 
 @end
 

@@ -1,7 +1,7 @@
 /*
      File: SpeedyCategories.m 
  Abstract: Simple utility categories used in this example. 
-  Version: 1.2 
+  Version: 1.3 
   
  Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple 
  Inc. ("Apple") in consideration of your agreement to the following 
@@ -41,7 +41,7 @@
  STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE 
  POSSIBILITY OF SUCH DAMAGE. 
   
- Copyright (C) 2011 Apple Inc. All Rights Reserved. 
+ Copyright (C) 2012 Apple Inc. All Rights Reserved. 
   
  */
 
@@ -49,12 +49,9 @@
 #import "SpeedyCategories.h"
 
 
-
-
-
 @implementation NSAffineTransform (RectMapping)
 
-- (NSAffineTransform*)mapFrom:(NSRect) src to: (NSRect) dst {
+- (NSAffineTransform *)mapFrom:(NSRect)src to:(NSRect)dst {
 	NSAffineTransformStruct at;
 	at.m11 = (dst.size.width/src.size.width);
 	at.m12 = 0.0;
@@ -68,8 +65,8 @@
 
 	/* create a transform that proportionately scales bounds to a rectangle of height
 	centered distance units above a particular point.   */
-- (NSAffineTransform*)scaleBounds:(NSRect) bounds 
-		toHeight: (float) height centeredDistance:(float) distance abovePoint:(NSPoint) location {
+- (NSAffineTransform *)scaleBounds:(NSRect)bounds 
+		toHeight:(float)height centeredDistance:(float)distance abovePoint:(NSPoint)location {
 	NSRect dst = bounds;
 	float scale = (height / dst.size.height);
 	dst.size.width *= scale;
@@ -81,16 +78,15 @@
 
 	/* create a transform that proportionately scales bounds to a rectangle of height
 	centered distance units above the origin.   */
-- (NSAffineTransform*)scaleBounds:(NSRect) bounds toHeight: (float) height
-			centeredAboveOrigin:(float) distance {
+- (NSAffineTransform *)scaleBounds:(NSRect)bounds toHeight:(float)height
+			centeredAboveOrigin:(float)distance {
 	return [self scaleBounds: bounds toHeight: height centeredDistance:
 			distance abovePoint: NSMakePoint(0,0)];
 }
 
-
 	/* initialize the NSAffineTransform so it will flip the contents of bounds
 	vertically. */
-- (NSAffineTransform*)flipVertical:(NSRect) bounds {
+- (NSAffineTransform *)flipVertical:(NSRect) bounds {
 	NSAffineTransformStruct at;
 	at.m11 = 1.0;
 	at.m12 = 0.0;
@@ -106,13 +102,11 @@
 
 
 
-
-
 @implementation NSBezierPath (ShadowDrawing)
 
 	/* fill a bezier path, but draw a shadow under it offset by the
 	given angle (counter clockwise from the x-axis) and distance. */
-- (void)fillWithShadowAtDegrees:(float) angle withDistance: (float) distance {
+- (void)fillWithShadowAtDegrees:(float) angle withDistance:(float)distance {
 	float radians = angle*(3.141592/180.0);
 	
 		/* create a new shadow */
@@ -142,7 +136,6 @@
 }
 
 @end
-
 
 
 
@@ -178,7 +171,6 @@
 			/* add the glyphs to the bezier path */
 		[bezier moveToPoint:point];
 		[bezier appendBezierPathWithPackedGlyphs: glyphs];
-	
 	}
 }
 
@@ -187,24 +179,25 @@
 
 @implementation NSString (BezierConversions)
 
-- (NSBezierPath*) bezierWithFont: (NSFont*) theFont {
+- (NSBezierPath *)bezierWithFont: (NSFont*) theFont {
+    
 	NSBezierPath *bezier = nil; /* default result */
 	
 		/* put the string's text into a text storage
 		so we can access the glyphs through a layout. */
-	NSTextStorage *textStore = [[NSTextStorage alloc] initWithString: self];
+	NSTextStorage *textStore = [[NSTextStorage alloc] initWithString:self];
 	NSTextContainer *textContainer = [[NSTextContainer alloc] init];
 	BezierNSLayoutManager *myLayout = [[BezierNSLayoutManager alloc] init];
-	[myLayout addTextContainer: textContainer];
-	[textStore addLayoutManager: myLayout];
+	[myLayout addTextContainer:textContainer];
+	[textStore addLayoutManager:myLayout];
 	[textStore setFont: theFont];
 	
 		/* create a new NSBezierPath and add it to the custom layout */
-	[myLayout setTheBezierPath: [NSBezierPath bezierPath]];
+	[myLayout setTheBezierPath:[NSBezierPath bezierPath]];
 	
 		/* to call drawGlyphsForGlyphRange, we need a destination so we'll
 		set up a temporary one.  Size is unimportant and can be small.  */
-	NSImage* theImage = [[NSImage alloc] initWithSize: NSMakeSize(10.0, 10.0)];
+	NSImage *theImage = [[NSImage alloc] initWithSize: NSMakeSize(10.0, 10.0)];
 		 /* lines are drawn in reverse order, so we will draw the text upside down
 		 and then flip the resulting NSBezierPath right side up again to achieve
 		 our final result with the lines in the right order and the text with
@@ -215,7 +208,7 @@
 		/* draw all of the glyphs to collecting them into a bezier path
 		using our custom layout class. */
 	NSRange glyphRange = [myLayout glyphRangeForTextContainer:textContainer];
-	[myLayout drawGlyphsForGlyphRange:glyphRange atPoint: NSMakePoint(0.0, 0.0)];
+	[myLayout drawGlyphsForGlyphRange:glyphRange atPoint:NSMakePoint(0.0, 0.0)];
 	
 		/* clean up our temporary drawing environment */
 	[theImage unlockFocus];
@@ -231,14 +224,11 @@
 	
 		/* Flip the final NSBezierPath. */
 	[bezier transformUsingAffineTransform: 
-		[[NSAffineTransform transform] flipVertical: [bezier bounds]]];
+		[[NSAffineTransform transform] flipVertical:[bezier bounds]]];
 	
 		/* return the new bezier path */
 	return bezier;
 }
 	
 @end
-
-
-
 

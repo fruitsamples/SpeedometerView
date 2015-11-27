@@ -1,7 +1,7 @@
 /*
      File: Controller.m 
  Abstract: Main window's controller. 
-  Version: 1.2 
+  Version: 1.3 
   
  Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple 
  Inc. ("Apple") in consideration of your agreement to the following 
@@ -41,7 +41,7 @@
  STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE 
  POSSIBILITY OF SUCH DAMAGE. 
   
- Copyright (C) 2011 Apple Inc. All Rights Reserved. 
+ Copyright (C) 2012 Apple Inc. All Rights Reserved. 
   
  */
 
@@ -59,6 +59,9 @@ NSString *kTitleKey = @"title";
 @synthesize presetButtonOne;
 @synthesize presetButtonTwo;
 @synthesize presetButtonThree;
+@synthesize presetOneValues;
+@synthesize presetTwoValues;
+@synthesize presetThreeValues;
 
 - (void)awakeFromNib {
 
@@ -70,47 +73,42 @@ NSString *kTitleKey = @"title";
 	[presetButtonThree setPeriodicDelay:1.0 interval:60.0];
 	
 		/* set up some default preset values */
-	 presetOneValues = [[NSDictionary alloc] initWithObjectsAndKeys:
+	 presetOneValues = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
 							[NSNumber numberWithFloat:90.0], kCurveKey,
 							[NSNumber numberWithFloat:33.0], kLevelKey,
 							[NSNumber numberWithInt:14], kTicksKey,
 							nil];
-	 presetTwoValues = [[NSDictionary alloc] initWithObjectsAndKeys:
+	 presetTwoValues = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
 							[NSNumber numberWithFloat:30.0], kCurveKey,
 							[NSNumber numberWithFloat:56.0], kLevelKey,
 							[NSNumber numberWithInt:9], kTicksKey,
 							nil];
-	 presetThreeValues = [[NSDictionary alloc] initWithObjectsAndKeys:
+	 presetThreeValues = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
 							[NSNumber numberWithFloat:75.0], kCurveKey,
 							[NSNumber numberWithFloat:89.0], kLevelKey,
 							[NSNumber numberWithInt:14], kTicksKey,
 							nil];
 }
 
-
-
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender {
 	return YES;
 }
 
-
-
-- (void) savePreset: (NSButton*) theButton toStore:(NSDictionary**) presetValues {
+- (void)savePreset:(NSButton *)theButton toStore:(NSDictionary **)presetValues {
 		
 		/* set the title to acknowledge that we're setting the preset */
 	NSString *savedTitle = [theButton title];
 	[theButton setTitle: @"SET"];
 	[*presetValues release];
-	*presetValues = [[NSDictionary alloc] initWithObjectsAndKeys:
+	*presetValues = [[[NSDictionary alloc] initWithObjectsAndKeys:
 						[NSNumber numberWithFloat:[speedView curvature]], kCurveKey,
 						[NSNumber numberWithFloat:[speedView speed]], kLevelKey,
 						[NSNumber numberWithInt:[speedView ticks]], kTicksKey,
 						savedTitle, kTitleKey,
-						nil];
+						nil] autorelease];
 }
 
-
-- (void) gotoPreset: (NSDictionary*) presetValues forButton: (NSButton*) theButton {
+- (void)gotoPreset:(NSDictionary *)presetValues forButton:(NSButton *)theButton {
 
 	[speedView setCurvature: [[presetValues objectForKey:kCurveKey] floatValue]];
 	[speedView setSpeed: [[presetValues objectForKey:kLevelKey] floatValue]];
@@ -124,53 +122,58 @@ NSString *kTitleKey = @"title";
 	}
 }
 
-
-
-
 - (IBAction)presetOne:(id)sender {
 		/* if the current event type is NSPeriodic when our action message
 		handler is called, then the mouse is being held down.  In this case,
 		we set the preset to the current values displayed on the sliders.  */
 	if ( [[NSApp currentEvent] type] == NSPeriodic ) {
 		
-		[self savePreset: presetButtonOne toStore:&presetOneValues];	
+		NSMutableDictionary *presetValues = nil;
+        [self savePreset: presetButtonOne toStore:&presetValues];
+        self.presetOneValues = presetValues;
 
 	} else {
 			/* otherwise this is a click on our button so we should
 			set the sliders to the values we have stored for this preset. */
 		[self gotoPreset: presetOneValues forButton: presetButtonOne];
 	}
-	
 }
 
 - (IBAction)presetTwo:(id)sender {
 	
 	if ( [[NSApp currentEvent] type] == NSPeriodic ) {
 		
-		[self savePreset: presetButtonTwo toStore:&presetTwoValues];	
+		NSMutableDictionary *presetValues = nil;
+        [self savePreset:presetButtonTwo toStore:&presetValues];
+        self.presetTwoValues = presetValues;
 
 	} else {
 
-		[self gotoPreset: presetTwoValues forButton: presetButtonTwo];
-
+		[self gotoPreset:presetTwoValues forButton:presetButtonTwo];
 	}
-	
 }
 
 - (IBAction)presetThree:(id)sender {
 	
 	if ( [[NSApp currentEvent] type] == NSPeriodic ) {
 		
-		[self savePreset: presetButtonThree toStore:&presetThreeValues];	
+		NSMutableDictionary *presetValues = nil;
+        [self savePreset:presetButtonThree toStore:&presetValues];
+        self.presetThreeValues = presetValues;
 
 	} else {
 
-		[self gotoPreset: presetThreeValues forButton: presetButtonThree];
-
+		[self gotoPreset:presetThreeValues forButton:presetButtonThree];
 	}
-
 }
 
-
+- (void)dealloc
+{
+    self.presetOneValues = nil;
+    self.presetTwoValues = nil;
+    self.presetThreeValues = nil;
+    
+    [super dealloc];
+}
 
 @end

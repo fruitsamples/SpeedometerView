@@ -2,7 +2,7 @@
      File: SpeedometerView.m 
  Abstract: Implements a custom view that looks very much like
  a speedometer 
-  Version: 1.2 
+  Version: 1.3 
   
  Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple 
  Inc. ("Apple") in consideration of your agreement to the following 
@@ -42,15 +42,13 @@
  STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE 
  POSSIBILITY OF SUCH DAMAGE. 
   
- Copyright (C) 2011 Apple Inc. All Rights Reserved. 
+ Copyright (C) 2012 Apple Inc. All Rights Reserved. 
   
  */
 
 
 #import "SpeedometerView.h"
 #import "SpeedyCategories.h"
-
-
 
 @implementation SpeedometerView
 
@@ -73,17 +71,14 @@
 	return self;
 }
 
-- (void) dealloc {
+- (void)dealloc {
 	self.boundingFrame = nil;
 	[super dealloc];
 }
 
-
-
 /* overridden accessor methods for our instance variables. NOTE: in the setter
  * methods we bound the input values to acceptable values for our custom view. 
  */
-
 - (void)setSpeed:(float)value {
     float nextLevel;
 	
@@ -146,21 +141,18 @@
     }
 }
 
-
-
 	/* used for saving information about the position of the pointer
 	that we use in our mouse tracking methods for adjusting the speed. */
-- (void)saveSweepWithCenter:(NSPoint) centerPt startAngle:(float) stAngle endAngle:(float) enAngle {
+- (void)saveSweepWithCenter:(NSPoint)centerPt startAngle:(float)stAngle endAngle:(float)enAngle {
+    
 	iStartAngle = stAngle; /* degrees counter clockwise from the x axis */
 	iEndAngle = enAngle; /* degrees counter clockwise from the x axis */
 	iCenterPt = centerPt; /* pivot point */
 }
 
-
-
-
     /* method for generating the bezier path we use for drawing our pointer */
-- (NSBezierPath*) speedPointerPath {
+- (NSBezierPath *)speedPointerPath {
+    
 	NSBezierPath* speedPointer = [NSBezierPath bezierPath];
 	[speedPointer moveToPoint:NSMakePoint(134.39, 218.05)];
 	[speedPointer curveToPoint:NSMakePoint(137.95, 219.75)
@@ -200,12 +192,10 @@
 	return speedPointer;
 }
 
-
-
-		/* method for generating the bezier path we use for drawing the ornaments
-		inside of the dial. */
-- (NSBezierPath*) ornamentPath {
-	NSBezierPath* ornament = [NSBezierPath bezierPath];
+    /* method for generating the bezier path we use for drawing the ornaments inside of the dial. */
+- (NSBezierPath *)ornamentPath {
+    
+	NSBezierPath *ornament = [NSBezierPath bezierPath];
 	[ornament moveToPoint:NSMakePoint(251.77, 135.25)];
 	[ornament curveToPoint:NSMakePoint(260.31, 146.12)
 		controlPoint1:NSMakePoint(252.88, 144.62)
@@ -232,12 +222,10 @@
 	return ornament;
 }
 
-
-
-		/* method for generating the bezier path we use for drawing the tik marks
-		around the outside of the dial. */
-- (NSBezierPath*) tickMarkPath {
-	NSBezierPath* tickMark = [NSBezierPath bezierPath];
+    /* method for generating the bezier path we use for drawing the tik marks around the outside of the dial. */
+- (NSBezierPath *)tickMarkPath {
+    
+	NSBezierPath *tickMark = [NSBezierPath bezierPath];
 	[tickMark moveToPoint:NSMakePoint(225.81, 358.28)];
 	[tickMark curveToPoint:NSMakePoint(222.7, 385.11)
 		controlPoint1:NSMakePoint(225.81, 358.28)
@@ -255,12 +243,9 @@
 	[tickMark setLineJoinStyle:NSRoundLineJoinStyle];
 	[tickMark setLineCapStyle:NSRoundLineCapStyle];
 	[tickMark setLineWidth: 0.25];
+    
 	return tickMark;
 }
-
-
-
-
 
 	/* custom view's main drawing method */
 - (void)drawRect:(NSRect)rect {
@@ -331,7 +316,7 @@
 
 
 		/* make a bezier path for the background */
-	NSBezierPath* frame = [[[NSBezierPath alloc] init] autorelease];
+	NSBezierPath *frame = [[[NSBezierPath alloc] init] autorelease];
 	[frame appendBezierPathWithArcWithCenter:center radius:centerSize startAngle:eAngle endAngle:sAngle clockwise:YES];
 	[frame appendBezierPathWithArcWithCenter:center radius:radius startAngle:sAngle endAngle:eAngle];
 	[frame closePath];
@@ -348,34 +333,34 @@
 	[self setBoundingFrame: frame];
 
 		/* construct a tick mark path centered at the origin */
-	NSBezierPath* tickmark = self.tickMarkPath;
+	NSBezierPath *tickmark = self.tickMarkPath;
 	[tickmark transformUsingAffineTransform: 
 		[[NSAffineTransform transform]
 				scaleBounds: [tickmark bounds] toHeight: tickSize centeredAboveOrigin: (radius - paddingSize - tickSize)]];
 
 		/* construct a small background decoration centered at the origin */
-	NSBezierPath* ornament = [self ornamentPath];
+	NSBezierPath *ornament = [self ornamentPath];
 	[ornament transformUsingAffineTransform: 
 		[[NSAffineTransform transform]
 				scaleBounds: [ornament bounds] toHeight: ornamentSize centeredAboveOrigin: ornamentBottom]];
 
 		/* construct a the indicator pointer centered at the origin */
-	NSBezierPath* speedPointer = [self speedPointerPath];
+	NSBezierPath *speedPointer = [self speedPointerPath];
 	[speedPointer transformUsingAffineTransform: 
 		[[NSAffineTransform transform]
 				scaleBounds: [speedPointer bounds] toHeight: indicatorSize centeredAboveOrigin: armBottom]];
 
 		/* blending colors for the ornaments and tick marks */
-	NSColor* startColor = [NSColor greenColor];
-	NSColor* midColor = [NSColor yellowColor];
-	NSColor* endColor = [NSColor redColor];
+	NSColor *startColor = [NSColor greenColor];
+	NSColor *midColor = [NSColor yellowColor];
+	NSColor *endColor = [NSColor redColor];
 
 		/* calculate the font to use for the label */
-	NSFont* labelFont = [[NSFont labelFontOfSize:labelSize] printerFont];
+	NSFont *labelFont = [[NSFont labelFontOfSize:labelSize] printerFont];
 
 		/* transforms used during drawing */
-	NSAffineTransform* transform;
-	NSAffineTransform* identity = [NSAffineTransform transform];
+	NSAffineTransform *transform;
+	NSAffineTransform *identity = [NSAffineTransform transform];
 	
 		/* calculate the pointer arm's total sweep */
 	float pointerWidth = speedPointer.bounds.size.width;
@@ -408,42 +393,39 @@
 		[transform rotateByDegrees: ( (limitedTicks-i-1)*tickdegrees + tickoutside + sAngle - 90 ) ];
 		[transform concat];
 
-			/* calculate the label string to display */
+		/* calculate the label string to display */
 		float displayedValue = roundf((float) (100.0/(limitedTicks-1))*i);
-		NSString *theLabel = [NSString stringWithFormat:@"%.0f", displayedValue, sweepAngle];
+		NSString *theLabel = [NSString stringWithFormat:@"%.0f", displayedValue];
 		
-					/* draw the tick mark label string using a NSBezierPath */
-		NSBezierPath* nthLabelPath = [theLabel bezierWithFont: labelFont];
+		/* draw the tick mark label string using a NSBezierPath */
+		NSBezierPath *nthLabelPath = [theLabel bezierWithFont:labelFont];
 		[nthLabelPath transformUsingAffineTransform: 
 			[[NSAffineTransform transform]
-					scaleBounds: [nthLabelPath bounds] toHeight: [nthLabelPath bounds].size.height
-						centeredAboveOrigin: bottomOfText-[labelFont descender]]];
+					scaleBounds: [nthLabelPath bounds] toHeight:[nthLabelPath bounds].size.height
+						centeredAboveOrigin:bottomOfText-[labelFont descender]]];
 		[nthLabelPath setLineWidth: 0.5];
 		[[NSColor blueColor] set];
 		[nthLabelPath fill];
 		[[NSColor blackColor] set];
 		[nthLabelPath stroke];
 
-
 			/* draw the ornament.
 			Ramp from green to yellow and then from yellow to red. */
 		float cfraction = ((float) i / (float)(limitedTicks-1));
 		if ( cfraction <= 0.5 )
 			[[startColor blendedColorWithFraction:cfraction*2 ofColor:midColor] set];
-		else [[midColor blendedColorWithFraction:(cfraction-0.5)*2 ofColor:endColor] set];
+		else
+            [[midColor blendedColorWithFraction:(cfraction-0.5)*2 ofColor:endColor] set];
 
-		
 			/* fill the tickmark and ornament */
 		[ornament fill];
 		[tickmark fill];
-		
 		
 			/* stroke the tickmark and ornament */
 		[[NSColor blackColor] set];
 		[tickmark stroke];
 		[ornament stroke];
-
-
+        
 			/* set the coordinates back the way they were */
 		[transform invert];
 		[transform concat];
@@ -452,7 +434,7 @@
 	}
 					
 		/* translate and rotate the indicator arrow to its final position */
-	NSAffineTransform* positionSpeedometer = [NSAffineTransform transform];
+	NSAffineTransform *positionSpeedometer = [NSAffineTransform transform];
 	[positionSpeedometer translateXBy:center.x yBy:center.y]; /* set the center to the center of our dial */
 	[positionSpeedometer rotateByDegrees: (armSweep+tickoutside-(armSweep/100)*speed + sAngle) - 90 ];
 	[speedPointer transformUsingAffineTransform: positionSpeedometer];
@@ -465,9 +447,7 @@
 	
 		/* record arm information for the drag routine */
 	[self saveSweepWithCenter:center startAngle:sAngle+tickoutside endAngle:sAngle+tickoutside+armSweep];
-
 }
-
 
 	/* convert a mouse click inside of the speedometer view into an angle, and then convert
 	that angle into the new value that should be displayed. */ 
@@ -507,7 +487,6 @@
 	return nil;
 }
 
-
 	/* re-calculate the speed value based on the mouse position for clicks
 	in the speedometer area of the view. */
 - (void)mouseDown:(NSEvent *)theEvent {
@@ -518,10 +497,8 @@
 		
 			/* set the dragging flag */
 		[self setDraggingIndicator: YES];
-		
 	}
 }
-
 
 	/* re-calculate the speed value based on the mouse position while the mouse
 	is being dragged inside of the speedometer area of the view. */
@@ -530,18 +507,14 @@
 	if ( [self.boundingFrame containsPoint:local_point] ) {
 	
 		[self setLevelForMouse:local_point];
-
 	}
 }
-
 
 	/* clear the dragging flag once the mouse is released. */
 - (void)mouseUp:(NSEvent *)theEvent {
 
 	[self setDraggingIndicator: NO];
-	
 }
-
 
 @end
 

@@ -2,7 +2,7 @@
      File: SpeedometerView.h
  Abstract: Implements a custom view that looks very much like
  a speedometer
-  Version: 1.2
+  Version: 1.3
  
  Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple
  Inc. ("Apple") in consideration of your agreement to the following
@@ -42,7 +42,7 @@
  STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
  
- Copyright (C) 2011 Apple Inc. All Rights Reserved.
+ Copyright (C) 2012 Apple Inc. All Rights Reserved.
  
  */
 
@@ -55,7 +55,7 @@
 	int ticks; /* 3 to 14 ticks */
 	
 		/* bounding frame for the entire control */
-	NSBezierPath* boundingFrame;
+	NSBezierPath *boundingFrame;
 	
 		/* information about the indicator pointer */
 	float iStartAngle, iEndAngle;
@@ -63,7 +63,6 @@
 	
 		/* true while we're dragging the indicator around */
 	BOOL draggingIndicator;
-
 }
 
 /* properties for our instance variables. */
@@ -71,13 +70,13 @@
 @property (nonatomic) float curvature;
 @property (nonatomic) int ticks;
 @property (nonatomic) BOOL draggingIndicator;
-@property (nonatomic, copy) NSBezierPath* boundingFrame;
+@property (nonatomic, copy) NSBezierPath *boundingFrame;
 
 - (id)initWithFrame:(NSRect)frameRect;
-- (void) dealloc;
+- (void)dealloc;
 
 	/* used for saving information about the position of the pointer
 	that we use in our mouse tracking methods for adjusting the speed. */
-- (void)saveSweepWithCenter:(NSPoint) centerPt startAngle:(float) stAngle endAngle:(float) enAngle;
+- (void)saveSweepWithCenter:(NSPoint)centerPt startAngle:(float)stAngle endAngle:(float)enAngle;
 
 @end
