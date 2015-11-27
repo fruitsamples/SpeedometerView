@@ -1,51 +1,50 @@
-/* File: SpeedometerView.m
-
-Abstract: implementation for the SpeedometerView class, a class
-that implements a custom view that looks very much like
-a speedometer.
-
-Version: 1.0
-
-Disclaimer: IMPORTANT:  This Apple software is supplied to you by 
-Apple Inc. ("Apple") in consideration of your agreement to the
-following terms, and your use, installation, modification or
-redistribution of this Apple software constitutes acceptance of these
-terms.  If you do not agree with these terms, please do not use,
-install, modify or redistribute this Apple software.
-
-In consideration of your agreement to abide by the following terms, and
-subject to these terms, Apple grants you a personal, non-exclusive
-license, under Apple's copyrights in this original Apple software (the
-"Apple Software"), to use, reproduce, modify and redistribute the Apple
-Software, with or without modifications, in source and/or binary forms;
-provided that if you redistribute the Apple Software in its entirety and
-without modifications, you must retain this notice and the following
-text and disclaimers in all such redistributions of the Apple Software. 
-Neither the name, trademarks, service marks or logos of Apple Inc. 
-may be used to endorse or promote products derived from the Apple
-Software without specific prior written permission from Apple.  Except
-as expressly stated in this notice, no other rights or licenses, express
-or implied, are granted by Apple herein, including but not limited to
-any patent rights that may be infringed by your derivative works or by
-other works in which the Apple Software may be incorporated.
-
-The Apple Software is provided by Apple on an "AS IS" basis.  APPLE
-MAKES NO WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION
-THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY AND FITNESS
-FOR A PARTICULAR PURPOSE, REGARDING THE APPLE SOFTWARE OR ITS USE AND
-OPERATION ALONE OR IN COMBINATION WITH YOUR PRODUCTS.
-
-IN NO EVENT SHALL APPLE BE LIABLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL
-OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-INTERRUPTION) ARISING IN ANY WAY OUT OF THE USE, REPRODUCTION,
-MODIFICATION AND/OR DISTRIBUTION OF THE APPLE SOFTWARE, HOWEVER CAUSED
-AND WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING NEGLIGENCE),
-STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE
-POSSIBILITY OF SUCH DAMAGE.
-
-Copyright (C) 2007 Apple Inc. All Rights Reserved.
-*/
+/*
+     File: SpeedometerView.m 
+ Abstract: Implements a custom view that looks very much like
+ a speedometer 
+  Version: 1.2 
+  
+ Disclaimer: IMPORTANT:  This Apple software is supplied to you by Apple 
+ Inc. ("Apple") in consideration of your agreement to the following 
+ terms, and your use, installation, modification or redistribution of 
+ this Apple software constitutes acceptance of these terms.  If you do 
+ not agree with these terms, please do not use, install, modify or 
+ redistribute this Apple software. 
+  
+ In consideration of your agreement to abide by the following terms, and 
+ subject to these terms, Apple grants you a personal, non-exclusive 
+ license, under Apple's copyrights in this original Apple software (the 
+ "Apple Software"), to use, reproduce, modify and redistribute the Apple 
+ Software, with or without modifications, in source and/or binary forms; 
+ provided that if you redistribute the Apple Software in its entirety and 
+ without modifications, you must retain this notice and the following 
+ text and disclaimers in all such redistributions of the Apple Software. 
+ Neither the name, trademarks, service marks or logos of Apple Inc. may 
+ be used to endorse or promote products derived from the Apple Software 
+ without specific prior written permission from Apple.  Except as 
+ expressly stated in this notice, no other rights or licenses, express or 
+ implied, are granted by Apple herein, including but not limited to any 
+ patent rights that may be infringed by your derivative works or by other 
+ works in which the Apple Software may be incorporated. 
+  
+ The Apple Software is provided by Apple on an "AS IS" basis.  APPLE 
+ MAKES NO WARRANTIES, EXPRESS OR IMPLIED, INCLUDING WITHOUT LIMITATION 
+ THE IMPLIED WARRANTIES OF NON-INFRINGEMENT, MERCHANTABILITY AND FITNESS 
+ FOR A PARTICULAR PURPOSE, REGARDING THE APPLE SOFTWARE OR ITS USE AND 
+ OPERATION ALONE OR IN COMBINATION WITH YOUR PRODUCTS. 
+  
+ IN NO EVENT SHALL APPLE BE LIABLE FOR ANY SPECIAL, INDIRECT, INCIDENTAL 
+ OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+ SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+ INTERRUPTION) ARISING IN ANY WAY OUT OF THE USE, REPRODUCTION, 
+ MODIFICATION AND/OR DISTRIBUTION OF THE APPLE SOFTWARE, HOWEVER CAUSED 
+ AND WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING NEGLIGENCE), 
+ STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE 
+ POSSIBILITY OF SUCH DAMAGE. 
+  
+ Copyright (C) 2011 Apple Inc. All Rights Reserved. 
+  
+ */
 
 
 #import "SpeedometerView.h"
@@ -55,34 +54,35 @@ Copyright (C) 2007 Apple Inc. All Rights Reserved.
 
 @implementation SpeedometerView
 
+@synthesize speed;
+@synthesize curvature;
+@synthesize ticks;
+@synthesize draggingIndicator;
 
-
-	/* initialization and deallocation. */
+/* initialization and deallocation. */
 	
 - (id)initWithFrame:(NSRect)frameRect
 {
-	if ((self = [super initWithFrame:frameRect]) != nil) {
-			/* set to some startup values */
-		[self setSpeed: 30.0];
-		[self setCurvature: 56.0];
-		[self setTicks: 9];
+    self = [super initWithFrame:frameRect];
+	if (self) {
+        /* set to some startup values */
+		self.speed = 30.0f;
+		self.curvature = 56.0f;
+		self.ticks = 9;
 	}
 	return self;
 }
 
 - (void) dealloc {
-	[self setBoundingFrame: nil];
+	self.boundingFrame = nil;
 	[super dealloc];
 }
 
 
 
-	/* accessor methods for our instance variables. NOTE: in the setter methods
-	we bound the input values to acceptable values for our custom view. */
-
-- (float)speed {
-    return speed;
-}
+/* overridden accessor methods for our instance variables. NOTE: in the setter
+ * methods we bound the input values to acceptable values for our custom view. 
+ */
 
 - (void)setSpeed:(float)value {
     float nextLevel;
@@ -99,13 +99,6 @@ Copyright (C) 2007 Apple Inc. All Rights Reserved.
         speed = nextLevel;
 		[self setNeedsDisplay:YES];
     }
-}
-
-
-
-
-- (float)curvature {
-    return curvature;
 }
 
 - (void)setCurvature:(float)value {
@@ -125,45 +118,22 @@ Copyright (C) 2007 Apple Inc. All Rights Reserved.
     }
 }
 
-
-
-
-- (int)ticks {
-    return ticks;
-}
-
 - (void)setTicks:(int)value {
 	int nextTicks;
 	
-		/* bound setting to acceptable value range */
+    /* bound setting to acceptable value range */
 	if (value < 3)
 		nextTicks = 3;
 	else if (value > 21)
 		nextTicks = 21;
 	else nextTicks = value;
 
-		/* set the new value, on change */
+    /* set the new value, on change */
     if (ticks != nextTicks) {
         ticks = nextTicks;
 		[self setNeedsDisplay:YES];
     }
 }
-
-
-
-
-- (BOOL)draggingIndicator {
-    return draggingIndicator;
-}
-
-- (void)setDraggingIndicator:(BOOL)value {
-    if (draggingIndicator != value) {
-        draggingIndicator = value;
-    }
-}
-
-
-
 
 - (NSBezierPath *)boundingFrame {
     return [[boundingFrame retain] autorelease];
@@ -189,7 +159,7 @@ Copyright (C) 2007 Apple Inc. All Rights Reserved.
 
 
 
-		/* method for generating the bezier path we use for drawing our pointer */
+    /* method for generating the bezier path we use for drawing our pointer */
 - (NSBezierPath*) speedPointerPath {
 	NSBezierPath* speedPointer = [NSBezierPath bezierPath];
 	[speedPointer moveToPoint:NSMakePoint(134.39, 218.05)];
@@ -299,7 +269,7 @@ Copyright (C) 2007 Apple Inc. All Rights Reserved.
 	const float shadowAngle = -35.0;
 	
 		/* the bounds of this view */
-    NSRect boundary = [self bounds];
+    NSRect boundary = self.bounds;
 	
 	float sweepAngle = 270.0*(curvature/100.0) + 45.0;
 	float sAngle = 90-sweepAngle/2;
@@ -378,7 +348,7 @@ Copyright (C) 2007 Apple Inc. All Rights Reserved.
 	[self setBoundingFrame: frame];
 
 		/* construct a tick mark path centered at the origin */
-	NSBezierPath* tickmark = [self tickMarkPath];
+	NSBezierPath* tickmark = self.tickMarkPath;
 	[tickmark transformUsingAffineTransform: 
 		[[NSAffineTransform transform]
 				scaleBounds: [tickmark bounds] toHeight: tickSize centeredAboveOrigin: (radius - paddingSize - tickSize)]];
@@ -404,24 +374,24 @@ Copyright (C) 2007 Apple Inc. All Rights Reserved.
 	NSFont* labelFont = [[NSFont labelFontOfSize:labelSize] printerFont];
 
 		/* transforms used during drawing */
-	NSAffineTransform* transform = [NSAffineTransform transform];
+	NSAffineTransform* transform;
 	NSAffineTransform* identity = [NSAffineTransform transform];
 	
 		/* calculate the pointer arm's total sweep */
-	float pointerWidth = [speedPointer bounds].size.width;
+	float pointerWidth = speedPointer.bounds.size.width;
 		 /* border on each end of sweep to accomodate width of pointer */
 	float tickoutside = ((pointerWidth*.67) / (radius/2.0)) * 180/pi;
 		 /* total arm sweep will be background sweep minus border on each side */
 	float armSweep = sweepAngle - tickoutside*2;
 	
 		/* calculate the number of tick mark labels */
-	float ornamentWidth = [ornament bounds].size.width;
+	float ornamentWidth = ornament.bounds.size.width;
 		 /* border on each end of sweep to accomodate width of pointer */
 	float ornamentDegrees = (ornamentWidth / ornamentBottom) * 180/pi;
 		/* calculate the maximum number of ornaments that will fit */
 	int maxTicks = truncf(armSweep/ornamentDegrees);
 		/* limit the number of ticks we'll draw by the maximum */
-	int limitedTicks = (([self ticks] > maxTicks) ? maxTicks : [self ticks]);
+	int limitedTicks = ((self.ticks > maxTicks) ? maxTicks : self.ticks);
 		/* calculate the number of degrees between tickmarks */
 	float tickdegrees = (armSweep)/((float)limitedTicks-1.0);
 
@@ -433,7 +403,7 @@ Copyright (C) 2007 Apple Inc. All Rights Reserved.
 			at the appropriate angle.  Here, we reset the xform matrix,
 			center it on the axis of our dial, and then rotate it to the
 			nth position. */
-		[transform initWithTransform: identity]; /* reset the xform matrix */
+		transform = [[NSAffineTransform alloc] initWithTransform: identity]; /* reset the xform matrix */
 		[transform translateXBy:center.x yBy:center.y]; /* set the center to the center of our dial */
 		[transform rotateByDegrees: ( (limitedTicks-i-1)*tickdegrees + tickoutside + sAngle - 90 ) ];
 		[transform concat];
@@ -477,6 +447,8 @@ Copyright (C) 2007 Apple Inc. All Rights Reserved.
 			/* set the coordinates back the way they were */
 		[transform invert];
 		[transform concat];
+        
+        [transform release];
 	}
 					
 		/* translate and rotate the indicator arrow to its final position */
@@ -515,22 +487,21 @@ Copyright (C) 2007 Apple Inc. All Rights Reserved.
 		
 		/* set the new speed, but only if it has changed */
 	float newLevel = (iEndAngle-clicked_angle)/(iEndAngle-iStartAngle) * 100.0;
-	if ([self speed] != newLevel) {
-		[self setSpeed: newLevel];
-	};
+	if (self.speed != newLevel) {
+		self.speed = newLevel;
+	}
 }
 
 	/* return false so we can track the mouse in our view. */
 - (BOOL)mouseDownCanMoveWindow {
 
-	return NO;	
-	
+    return NO;
 }
 
 	/* test for mouse clicks inside of the speedometer area of the view */
 - (NSView *)hitTest:(NSPoint)aPoint {
 	NSPoint local_point = [self convertPoint:aPoint fromView:[self superview]];
-	if ( [[self boundingFrame] containsPoint:local_point] ) {
+	if ( [self.boundingFrame containsPoint:local_point] ) {
 		return self;
 	}
 	return nil;
@@ -541,7 +512,7 @@ Copyright (C) 2007 Apple Inc. All Rights Reserved.
 	in the speedometer area of the view. */
 - (void)mouseDown:(NSEvent *)theEvent {
 	NSPoint local_point = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-	if ( [[self boundingFrame] containsPoint:local_point] ) {
+	if ( [self.boundingFrame containsPoint:local_point] ) {
 	
 		[self setLevelForMouse:local_point];
 		
@@ -556,7 +527,7 @@ Copyright (C) 2007 Apple Inc. All Rights Reserved.
 	is being dragged inside of the speedometer area of the view. */
 - (void)mouseDragged:(NSEvent *)theEvent {
 	NSPoint local_point = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-	if ( [[self boundingFrame] containsPoint:local_point] ) {
+	if ( [self.boundingFrame containsPoint:local_point] ) {
 	
 		[self setLevelForMouse:local_point];
 
